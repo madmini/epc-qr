@@ -87,7 +87,7 @@ class EpcQrData {
     );
   }
 
-  String toQrDataString() => """BCD
+  String get qrDataString => """BCD
 $version
 $charset
 $identificationCode

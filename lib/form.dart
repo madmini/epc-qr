@@ -1,4 +1,5 @@
 import 'package:epc_qr/qr_data.dart';
+import 'package:epc_qr/view_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -21,8 +22,7 @@ class EpcQrFormPage extends StatefulWidget {
 }
 
 class _EpcQrFormPageState extends State<EpcQrFormPage> {
-  EpcQrData? data;
-  bool useRef = true;
+  bool useRef = true; // TODO move this state into separate widget
 
   @override
   Widget build(BuildContext context) {
@@ -32,98 +32,87 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.qr_code),
-        onPressed: _generateCode,
+        onPressed: () => _generateCode(context),
       ),
-      body: ListView(
-        children: [
-          FormBuilder(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 8.0),
-                const _NameInputField(),
-                const _IbanInputField(),
-                const _BicInputField(),
-                const _AmountInputField(),
-                const Divider(thickness: 2),
-                Padding(
-                  padding: _fieldPadding,
-                  child: FormBuilderRadioGroup<bool>(
-                    name: 'use-ref',
-                    separator: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text('or'),
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                    options: const [
-                      FormBuilderFieldOption(
-                        value: true,
-                        child: Text('Reference'),
-                      ),
-                      FormBuilderFieldOption(
-                        value: false,
-                        child: Text('Purpose'),
-                      ),
-                    ],
-                    initialValue: useRef,
-                    onChanged: (value) {
-                      setState(() {
-                        useRef = value!;
-                      });
-                    },
-                  ),
+      body: FormBuilder(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8.0),
+            const _NameInputField(),
+            const _IbanInputField(),
+            const _BicInputField(),
+            const _AmountInputField(),
+            const Divider(thickness: 2),
+            Padding(
+              padding: _fieldPadding,
+              child: FormBuilderRadioGroup<bool>(
+                name: 'use-ref',
+                separator: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text('or'),
                 ),
-                // if (useRef)
-                _ReferenceInputField(enabled: useRef),
-                // else
-                _PurposeInputField(enabled: !useRef),
-                const Divider(thickness: 2.0),
-                const _NoteInputField(),
-                Padding(
-                  padding: _fieldPadding,
-                  child: Center(
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.qr_code, size: 18),
-                      label: const Text('GENERATE CODE'),
-                      onPressed: _generateCode,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          if (data != null)
-            Center(
-              child: ConstrainedBox(
-                constraints:
-                    const BoxConstraints(maxHeight: 320, maxWidth: 320),
-                child: QrImage(
-                  data: data!.toQrDataString(),
-                  errorCorrectionLevel: QrErrorCorrectLevel.M,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
                 ),
+                options: const [
+                  FormBuilderFieldOption(
+                    value: true,
+                    child: Text('Reference'),
+                  ),
+                  FormBuilderFieldOption(
+                    value: false,
+                    child: Text('Purpose'),
+                  ),
+                ],
+                initialValue: useRef,
+                onChanged: (value) {
+                  setState(() {
+                    useRef = value!;
+                  });
+                },
               ),
             ),
-        ],
+            // if (useRef)
+            _ReferenceInputField(enabled: useRef),
+            // else
+            _PurposeInputField(enabled: !useRef),
+            const Divider(thickness: 2.0),
+            const _NoteInputField(),
+            Padding(
+              padding: _fieldPadding,
+              child: Center(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.qr_code, size: 18),
+                  label: const Text('GENERATE CODE'),
+                  onPressed: () => _generateCode(context),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  void _generateCode() {
+  void _generateCode(BuildContext context) {
     if (!_formKey.currentState!.saveAndValidate()) return;
 
     var values = _formKey.currentState!.value;
     var newData = EpcQrData.fromMap(values);
-    setState(() {
-      data = newData;
-    });
 
     GetIt.I.get<SharedPreferences>()
       ..setString('name', values['name'])
       ..setString('iban', values['iban'])
       ..setString('bic', values['bic']);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ViewCodePage(qrData: newData),
+      ),
+    );
   }
 }
 
