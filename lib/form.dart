@@ -80,6 +80,8 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
                 _ReferenceInputField(enabled: useRef),
                 // else
                 _PurposeInputField(enabled: !useRef),
+                const Divider(thickness: 2.0),
+                const _NoteInputField(),
                 Padding(
                   padding: _fieldPadding,
                   child: Center(
@@ -134,6 +136,7 @@ class _NameInputField extends StatelessWidget {
         name: 'name',
         initialValue: GetIt.I.get<SharedPreferences>().getString('name'),
         decoration: const InputDecoration(
+          prefixIcon: Icon(Icons.person),
           label: Text('Name'),
           border: OutlineInputBorder(),
         ),
@@ -159,6 +162,7 @@ class _IbanInputField extends StatelessWidget {
         name: 'iban',
         initialValue: GetIt.I.get<SharedPreferences>().getString('iban'),
         decoration: const InputDecoration(
+          prefixIcon: Icon(Icons.numbers),
           label: Text('IBAN'),
           border: OutlineInputBorder(),
         ),
@@ -184,6 +188,7 @@ class _BicInputField extends StatelessWidget {
         name: 'bic',
         initialValue: GetIt.I.get<SharedPreferences>().getString('bic'),
         decoration: const InputDecoration(
+          prefixIcon: Icon(Icons.account_balance),
           label: Text('BIC'),
           border: OutlineInputBorder(),
         ),
@@ -205,6 +210,7 @@ class _AmountInputField extends StatelessWidget {
       child: FormBuilderTextField(
         name: 'amount',
         decoration: const InputDecoration(
+          prefixIcon: Icon(Icons.euro),
           label: Text('Amount'),
           border: OutlineInputBorder(),
         ),
@@ -245,6 +251,7 @@ class _ReferenceInputField extends StatelessWidget {
         key: _refKey,
         name: 'reference',
         decoration: const InputDecoration(
+          prefixIcon: Icon(Icons.code),
           label: Text('Payment reference'),
           border: OutlineInputBorder(),
         ),
@@ -271,11 +278,36 @@ class _PurposeInputField extends StatelessWidget {
         key: _refTextKey,
         name: 'referenceText',
         decoration: const InputDecoration(
+          prefixIcon: Icon(Icons.comment),
           label: Text('Purpose'),
           border: OutlineInputBorder(),
         ),
         validator: FormBuilderValidators.maxLength(140),
         enabled: enabled,
+      ),
+    );
+  }
+}
+
+class _NoteInputField extends StatelessWidget {
+  const _NoteInputField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: _fieldPadding,
+      child: FormBuilderTextField(
+        name: 'note',
+        decoration: InputDecoration(
+          prefixIcon: Transform.scale(
+            scaleX: -1.0,
+            child: const Icon(Icons.comment),
+          ),
+          label: const Text('Note for the payer'),
+          // hintText: 'A message for the payer',
+          border: const OutlineInputBorder(),
+        ),
+        validator: FormBuilderValidators.maxLength(70),
       ),
     );
   }
