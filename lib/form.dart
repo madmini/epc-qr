@@ -11,6 +11,8 @@ final _formKey = GlobalKey<FormBuilderState>();
 final _refKey = GlobalKey();
 final _refTextKey = GlobalKey();
 
+const _fieldPadding = EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0);
+
 class EpcQrFormPage extends StatefulWidget {
   const EpcQrFormPage({Key? key}) : super(key: key);
 
@@ -25,79 +27,94 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      appBar: AppBar(
+        title: const Text('Enter Payment Data'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.qr_code),
+        onPressed: null,
+      ),
+      body: ListView(
         children: [
           FormBuilder(
             key: _formKey,
-            child: Expanded(
-              child: ListView(
-                children: [
-                  const _NameInputField(),
-                  const _IbanInputField(),
-                  const _BicInputField(),
-                  const _AmountInputField(),
-                  const Divider(thickness: 2),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: FormBuilderRadioGroup<bool>(
-                      name: 'use-ref',
-                      separator: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text('or'),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 8.0),
+                const _NameInputField(),
+                const _IbanInputField(),
+                const _BicInputField(),
+                const _AmountInputField(),
+                const Divider(thickness: 2),
+                Padding(
+                  padding: _fieldPadding,
+                  child: FormBuilderRadioGroup<bool>(
+                    name: 'use-ref',
+                    separator: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text('or'),
+                    ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                    options: const [
+                      FormBuilderFieldOption(
+                        value: true,
+                        child: Text('Reference'),
                       ),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
+                      FormBuilderFieldOption(
+                        value: false,
+                        child: Text('Purpose'),
                       ),
-                      options: const [
-                        FormBuilderFieldOption(
-                          value: true,
-                          child: Text('Reference'),
-                        ),
-                        FormBuilderFieldOption(
-                          value: false,
-                          child: Text('Purpose'),
-                        ),
-                      ],
-                      initialValue: useRef,
-                      onChanged: (value) {
+                    ],
+                    initialValue: useRef,
+                    onChanged: (value) {
+                      setState(() {
+                        useRef = value!;
+                      });
+                    },
+                  ),
+                ),
+                // if (useRef)
+                _ReferenceInputField(enabled: useRef),
+                // else
+                _PurposeInputField(enabled: !useRef),
+                Padding(
+                  padding: _fieldPadding,
+                  child: Center(
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.qr_code, size: 18),
+                      label: const Text("GENERATE CODE"),
+                      onPressed: () {
+                        if (!_formKey.currentState!.saveAndValidate()) return;
+
+                        var values = _formKey.currentState!.value;
+                        var newData = EpcQrData.fromMap(values);
                         setState(() {
-                          useRef = value!;
+                          data = newData;
                         });
+
+                        GetIt.I.get<SharedPreferences>()
+                          ..setString('name', values['name'])
+                          ..setString('iban', values['iban'])
+                          ..setString('bic', values['bic']);
                       },
                     ),
                   ),
-                  // if (useRef)
-                  _ReferenceInputField(enabled: useRef),
-                  // else
-                  _PurposeInputField(enabled: !useRef),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.qr_code, size: 18),
-                    label: const Text("GENERATE CODE"),
-                    onPressed: () {
-                      if (!_formKey.currentState!.saveAndValidate()) return;
-
-                      var values = _formKey.currentState!.value;
-                      var newData = EpcQrData.fromMap(values);
-                      setState(() {
-                        data = newData;
-                      });
-
-                      GetIt.I.get<SharedPreferences>()
-                        ..setString('name', values['name'])
-                        ..setString('iban', values['iban'])
-                        ..setString('bic', values['bic']);
-                    },
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
           if (data != null)
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 320, maxWidth: 320),
-              child: QrImage(
-                data: data!.toQrDataString(),
-                errorCorrectionLevel: QrErrorCorrectLevel.M,
+            Center(
+              child: ConstrainedBox(
+                constraints:
+                    const BoxConstraints(maxHeight: 320, maxWidth: 320),
+                child: QrImage(
+                  data: data!.toQrDataString(),
+                  errorCorrectionLevel: QrErrorCorrectLevel.M,
+                ),
               ),
             ),
         ],
@@ -112,7 +129,7 @@ class _NameInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: _fieldPadding,
       child: FormBuilderTextField(
         name: 'name',
         initialValue: GetIt.I.get<SharedPreferences>().getString('name'),
@@ -137,7 +154,7 @@ class _IbanInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: _fieldPadding,
       child: FormBuilderTextField(
         name: 'iban',
         initialValue: GetIt.I.get<SharedPreferences>().getString('iban'),
@@ -162,7 +179,7 @@ class _BicInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: _fieldPadding,
       child: FormBuilderTextField(
         name: 'bic',
         initialValue: GetIt.I.get<SharedPreferences>().getString('bic'),
@@ -184,7 +201,7 @@ class _AmountInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: _fieldPadding,
       child: FormBuilderTextField(
         name: 'amount',
         decoration: const InputDecoration(
@@ -201,6 +218,8 @@ class _AmountInputField extends StatelessWidget {
                 : oldValue;
           }),
         ],
+        valueTransformer: (value) =>
+            num.tryParse(value?.replaceAll(',', '.') ?? ''),
         validator: FormBuilderValidators.compose([
           FormBuilderValidators.min(0.01),
           FormBuilderValidators.max(999999999.99),
@@ -221,7 +240,7 @@ class _ReferenceInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: _fieldPadding,
       child: FormBuilderTextField(
         key: _refKey,
         name: 'reference',
@@ -247,7 +266,7 @@ class _PurposeInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: _fieldPadding,
       child: FormBuilderTextField(
         key: _refTextKey,
         name: 'referenceText',
