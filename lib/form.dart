@@ -31,8 +31,8 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
         title: const Text('Enter Payment Data'),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.qr_code),
-        onPressed: null,
+        child: const Icon(Icons.qr_code),
+        onPressed: _generateCode,
       ),
       body: ListView(
         children: [
@@ -87,21 +87,8 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
                   child: Center(
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.qr_code, size: 18),
-                      label: const Text("GENERATE CODE"),
-                      onPressed: () {
-                        if (!_formKey.currentState!.saveAndValidate()) return;
-
-                        var values = _formKey.currentState!.value;
-                        var newData = EpcQrData.fromMap(values);
-                        setState(() {
-                          data = newData;
-                        });
-
-                        GetIt.I.get<SharedPreferences>()
-                          ..setString('name', values['name'])
-                          ..setString('iban', values['iban'])
-                          ..setString('bic', values['bic']);
-                      },
+                      label: const Text('GENERATE CODE'),
+                      onPressed: _generateCode,
                     ),
                   ),
                 )
@@ -122,6 +109,21 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
         ],
       ),
     );
+  }
+
+  void _generateCode() {
+    if (!_formKey.currentState!.saveAndValidate()) return;
+
+    var values = _formKey.currentState!.value;
+    var newData = EpcQrData.fromMap(values);
+    setState(() {
+      data = newData;
+    });
+
+    GetIt.I.get<SharedPreferences>()
+      ..setString('name', values['name'])
+      ..setString('iban', values['iban'])
+      ..setString('bic', values['bic']);
   }
 }
 
