@@ -17,6 +17,8 @@ dependencies:
   form_builder_validators: ^8.1.1
   qr_flutter: ^4.0.0 # display qr codes
   get_it: ^7.2.0 # service locator
+  share_plus: ^4.0.8
+  path_provider: ^2.0.11
 
 dev_dependencies:
   flutter_lints: ^2.0.0
