@@ -35,61 +35,63 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
       ),
       body: FormBuilder(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 8.0),
-            const _NameInputField(),
-            const _IbanInputField(),
-            const _BicInputField(),
-            const _AmountInputField(),
-            const Divider(thickness: 2),
-            Padding(
-              padding: _fieldPadding,
-              child: FormBuilderRadioGroup<bool>(
-                name: 'use-ref',
-                separator: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text('or'),
-                ),
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                ),
-                options: const [
-                  FormBuilderFieldOption(
-                    value: true,
-                    child: Text('Reference'),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8.0),
+              const _NameInputField(),
+              const _IbanInputField(),
+              const _BicInputField(),
+              const _AmountInputField(),
+              const Divider(thickness: 2),
+              Padding(
+                padding: _fieldPadding,
+                child: FormBuilderRadioGroup<bool>(
+                  name: 'use-ref',
+                  separator: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text('or'),
                   ),
-                  FormBuilderFieldOption(
-                    value: false,
-                    child: Text('Purpose'),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
                   ),
-                ],
-                initialValue: useRef,
-                onChanged: (value) {
-                  setState(() {
-                    useRef = value!;
-                  });
-                },
-              ),
-            ),
-            // if (useRef)
-            _ReferenceInputField(enabled: useRef),
-            // else
-            _PurposeInputField(enabled: !useRef),
-            const Divider(thickness: 2.0),
-            const _NoteInputField(),
-            Padding(
-              padding: _fieldPadding,
-              child: Center(
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.qr_code, size: 18),
-                  label: const Text('GENERATE CODE'),
-                  onPressed: () => _generateCode(context),
+                  options: const [
+                    FormBuilderFieldOption(
+                      value: true,
+                      child: Text('Reference'),
+                    ),
+                    FormBuilderFieldOption(
+                      value: false,
+                      child: Text('Purpose'),
+                    ),
+                  ],
+                  initialValue: useRef,
+                  onChanged: (value) {
+                    setState(() {
+                      useRef = value!;
+                    });
+                  },
                 ),
               ),
-            )
-          ],
+              // if (useRef)
+              _ReferenceInputField(enabled: useRef),
+              // else
+              _PurposeInputField(enabled: !useRef),
+              const Divider(thickness: 2.0),
+              const _NoteInputField(),
+              Padding(
+                padding: _fieldPadding,
+                child: Center(
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.qr_code, size: 18),
+                    label: const Text('GENERATE CODE'),
+                    onPressed: () => _generateCode(context),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
