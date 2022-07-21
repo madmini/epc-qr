@@ -163,6 +163,7 @@ class _IbanInputField extends StatelessWidget {
           label: Text('IBAN'),
           border: OutlineInputBorder(),
         ),
+        valueTransformer: (value) => value?.replaceAll(' ', ''),
         inputFormatters: [LengthLimitingTextInputFormatter(34)],
         validator: FormBuilderValidators.compose([
           FormBuilderValidators.required(),
