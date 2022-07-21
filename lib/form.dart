@@ -100,7 +100,12 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
   void _showCode(BuildContext context) {
     if (!_formKey.currentState!.saveAndValidate()) return;
 
-    var values = _formKey.currentState!.value;
+    Map<String, dynamic> values = _formKey.currentState!.value;
+    if (useRef) {
+      values['purpose'] = null;
+    } else {
+      values['reference'] = null;
+    }
     var newData = EpcQrData.fromMap(values);
 
     GetIt.I.get<SharedPreferences>()
@@ -247,6 +252,9 @@ class _ReferenceInputField extends StatelessWidget {
           label: Text('Payment reference'),
           border: OutlineInputBorder(),
         ),
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(140),
+        ],
         validator: FormBuilderValidators.maxLength(140),
         enabled: enabled,
       ),
@@ -274,6 +282,9 @@ class _PurposeInputField extends StatelessWidget {
           label: Text('Purpose'),
           border: OutlineInputBorder(),
         ),
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(140),
+        ],
         validator: FormBuilderValidators.maxLength(140),
         enabled: enabled,
       ),
