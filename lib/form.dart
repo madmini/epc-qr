@@ -49,13 +49,6 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
                 padding: _fieldPadding,
                 child: FormBuilderRadioGroup<bool>(
                   name: 'use-ref',
-                  separator: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text('or'),
-                  ),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
                   options: const [
                     FormBuilderFieldOption(
                       value: true,
@@ -66,12 +59,19 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
                       child: Text('Purpose'),
                     ),
                   ],
+                  separator: const Padding(
+                    padding: EdgeInsets.only(left: 16.0, right: 8.0),
+                    child: Text('or'),
+                  ),
                   initialValue: useRef,
                   onChanged: (value) {
                     setState(() {
                       useRef = value!;
                     });
                   },
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
               // if (useRef)

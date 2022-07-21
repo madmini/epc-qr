@@ -7,7 +7,7 @@ bool get shareFeatureAvailable => true;
 
 Future<void> shareFile(String name, List<int> data, {String? mimeType}) async {
   final content = base64Encode(data);
-  final anchor = AnchorElement(
+  AnchorElement(
       href: 'data:application/octet-stream;charset=utf-16le;base64,$content')
     ..setAttribute('download', name)
     ..click();
