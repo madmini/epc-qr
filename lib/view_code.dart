@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:epc_qr/qr_data.dart';
 import 'package:epc_qr/share/share_stub.dart'
     if (dart.library.html) 'package:epc_qr/share/share_web.dart'
     if (dart.library.io) 'package:epc_qr/share/share_io.dart';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img_lib;
+import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class ViewCodePage extends StatelessWidget {
@@ -18,20 +21,12 @@ class ViewCodePage extends StatelessWidget {
 
   final QrCode qrCode;
 
+  final GlobalKey _qrBoundaryKey = GlobalKey(debugLabel: 'PaymentInfoQrView');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Payment Information'),
-        // actions: [
-        //   Builder(builder: (context) {
-        //     return IconButton(
-        //       icon: const Icon(Icons.save),
-        //       onPressed: () => _shareQrCodeImage(context),
-        //     );
-        //   }),
-        // ],
-      ),
+      appBar: AppBar(title: const Text('Payment Information')),
       floatingActionButton: Builder(
         builder: (context) => FloatingActionButton(
           child: const Icon(Icons.save),
@@ -39,23 +34,35 @@ class ViewCodePage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            QrImageView.withQr(qr: qrCode),
-            const SizedBox(height: 24),
-            Text(qrData.name, textScaleFactor: 2.5),
-            Text('(${qrData.iban})', textScaleFactor: 1.25),
-            if (qrData.amount != 0)
-              Text(
-                '€${qrData.amount.toStringAsFixed(2)}',
-                style: Theme.of(context).textTheme.displaySmall,
-              ),
-            if (qrData.reference.isNotEmpty)
-              Text(qrData.reference)
-            else if (qrData.referenceText.isNotEmpty)
-              Text(qrData.referenceText),
-          ],
+        child: RepaintBoundary(
+          key: _qrBoundaryKey,
+          child: Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                QrImageView.withQr(
+                  qr: qrCode,
+                  backgroundColor: ThemeData.light().scaffoldBackgroundColor,
+                  foregroundColor: Colors.black,
+                ),
+                const SizedBox(height: 24),
+                Text(qrData.name, textScaleFactor: 2.5),
+                Text('(${qrData.iban})', textScaleFactor: 1.25),
+                if (qrData.amount != 0)
+                  Text(
+                    '€${qrData.amount.toStringAsFixed(2)}',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                if (qrData.reference.isNotEmpty)
+                  Text(qrData.reference)
+                else if (qrData.referenceText.isNotEmpty)
+                  Text(qrData.referenceText),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -71,25 +78,18 @@ class ViewCodePage extends StatelessWidget {
       return;
     }
 
-    // the number of squares the code is wide/high
-    int qrSize = qrCode.moduleCount;
-    int imgSize = qrSize * 24;
+    final boundary = _qrBoundaryKey.currentContext?.findRenderObject()
+        as RenderRepaintBoundary?;
+    if (boundary == null) return;
 
-    final imgByteData =
-        await QrPainter.withQr(qr: qrCode).toImageData(imgSize.toDouble());
-    if (imgByteData == null) return;
-    final imgData = imgByteData.buffer.asUint8List(
-      imgByteData.offsetInBytes,
-      imgByteData.lengthInBytes,
-    );
-    var img = img_lib.decodePng(imgData);
-    if (img == null) return;
+    ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+    final imgData = await _imageToBytes(image);
+    if (imgData == null) return;
+    shareFile('payment-info.png', imgData, mimeType: 'image/png');
+  }
 
-    final bg = img_lib.Image(imgSize, imgSize);
-    bg.fill(Colors.white.value);
-
-    img_lib.copyInto(bg, img, blend: true);
-
-    shareFile('payment-info.png', img_lib.encodePng(bg), mimeType: 'image/png');
+  Future<List<int>?> _imageToBytes(ui.Image image) async {
+    ByteData? data = await image.toByteData(format: ui.ImageByteFormat.png);
+    return data?.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
   }
 }

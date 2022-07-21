@@ -22,9 +22,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
-      home: EpcQrFormPage(),
+      home: const EpcQrFormPage(),
+      themeMode: ThemeMode.system,
+      darkTheme: ThemeData.dark(),
     );
   }
 }
