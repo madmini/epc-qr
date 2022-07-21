@@ -1,5 +1,5 @@
 bool get shareFeatureAvailable {
-  throw(UnimplementedError("STUB"));
+  throw (UnimplementedError("STUB"));
   return false;
 }
 

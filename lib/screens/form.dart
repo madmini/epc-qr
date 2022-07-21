@@ -1,5 +1,5 @@
-import 'package:epc_qr/qr_data.dart';
-import 'package:epc_qr/view_code.dart';
+import 'package:epc_qr/data/qr_data.dart';
+import 'package:epc_qr/screens/view_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
