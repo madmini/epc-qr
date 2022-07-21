@@ -31,7 +31,7 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.qr_code),
-        onPressed: () => _generateCode(context),
+        onPressed: () => _showCode(context),
       ),
       body: FormBuilder(
         key: _formKey,
@@ -85,8 +85,8 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
                 child: Center(
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.qr_code, size: 18),
-                    label: const Text('GENERATE CODE'),
-                    onPressed: () => _generateCode(context),
+                    label: const Text('SHOW CODE'),
+                    onPressed: () => _showCode(context),
                   ),
                 ),
               )
@@ -97,7 +97,7 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
     );
   }
 
-  void _generateCode(BuildContext context) {
+  void _showCode(BuildContext context) {
     if (!_formKey.currentState!.saveAndValidate()) return;
 
     var values = _formKey.currentState!.value;
