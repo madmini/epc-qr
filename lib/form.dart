@@ -103,9 +103,9 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
     var newData = EpcQrData.fromMap(values);
 
     GetIt.I.get<SharedPreferences>()
-      ..setString('name', values['name'])
-      ..setString('iban', values['iban'])
-      ..setString('bic', values['bic']);
+      ..setString('name', newData.name)
+      ..setString('iban', newData.iban)
+      ..setString('bic', newData.bic);
 
     Navigator.push(
       context,

@@ -75,11 +75,19 @@ class EpcQrData {
   }) : assert(reference.isEmpty || referenceText.isEmpty);
 
   factory EpcQrData.fromMap(Map<String, dynamic> data) {
+    dynamic amountData = data['amount'];
+    num? amount;
+    if (amountData is num?) {
+      amount = amountData;
+    } else if (amountData is String?) {
+      amount = num.tryParse(amountData?.replaceAll(',', '.') ?? '');
+    }
+
     return EpcQrData(
       name: data['name'],
       iban: data['iban'],
       bic: data['bic'] ?? '',
-      amount: (data['amount'] as num?) ?? 0,
+      amount: amount ?? 0,
       purpose: data['purpose'] ?? '',
       reference: data['reference'] ?? '',
       referenceText: data['referenceText'] ?? '',
