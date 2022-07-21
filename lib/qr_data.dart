@@ -79,7 +79,7 @@ class EpcQrData {
       name: data['name'],
       iban: data['iban'],
       bic: data['bic'] ?? '',
-      amount: data['amount'] ?? 0,
+      amount: (data['amount'] as num?) ?? 0,
       purpose: data['purpose'] ?? '',
       reference: data['reference'] ?? '',
       referenceText: data['referenceText'] ?? '',
