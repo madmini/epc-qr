@@ -83,6 +83,11 @@ class EpcQrData {
       amount = num.tryParse(amountData?.replaceAll(',', '.') ?? '');
     }
 
+    String? referenceText;
+    if ((data['reference'] as String? ?? '').isEmpty) {
+      referenceText = data['referenceText'];
+    }
+
     return EpcQrData(
       name: data['name'],
       iban: data['iban'],
@@ -90,7 +95,7 @@ class EpcQrData {
       amount: amount ?? 0,
       purpose: data['purpose'] ?? '',
       reference: data['reference'] ?? '',
-      referenceText: data['referenceText'] ?? '',
+      referenceText: referenceText ?? '',
       note: data['note'] ?? '',
     );
   }

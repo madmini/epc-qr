@@ -100,9 +100,9 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
   void _showCode(BuildContext context) {
     if (!_formKey.currentState!.saveAndValidate()) return;
 
-    Map<String, dynamic> values = _formKey.currentState!.value;
+    var values = Map<String, dynamic>.from(_formKey.currentState!.value);
     if (useRef) {
-      values['purpose'] = null;
+      values['referenceText'] = null;
     } else {
       values['reference'] = null;
     }
