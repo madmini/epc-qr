@@ -71,7 +71,12 @@ class ViewCodePage extends StatelessWidget {
       return;
     }
 
-    final imgByteData = await QrPainter.withQr(qr: qrCode).toImageData(200);
+    // the number of squares the code is wide/high
+    int qrSize = qrCode.moduleCount;
+    int imgSize = qrSize * 24;
+
+    final imgByteData =
+        await QrPainter.withQr(qr: qrCode).toImageData(imgSize.toDouble());
     if (imgByteData == null) return;
     final imgData = imgByteData.buffer.asUint8List(
       imgByteData.offsetInBytes,
@@ -80,7 +85,7 @@ class ViewCodePage extends StatelessWidget {
     var img = img_lib.decodePng(imgData);
     if (img == null) return;
 
-    final bg = img_lib.Image(200, 200);
+    final bg = img_lib.Image(imgSize, imgSize);
     bg.fill(Colors.white.value);
 
     img_lib.copyInto(bg, img, blend: true);
