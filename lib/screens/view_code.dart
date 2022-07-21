@@ -33,34 +33,42 @@ class ViewCodePage extends StatelessWidget {
           onPressed: () => _shareQrCodeImage(context),
         ),
       ),
-      body: SingleChildScrollView(
-        child: RepaintBoundary(
-          key: _qrBoundaryKey,
-          child: Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                QrImageView.withQr(
-                  qr: qrCode,
-                  backgroundColor: ThemeData.light().scaffoldBackgroundColor,
-                  foregroundColor: Colors.black,
+      body: Center(
+        // two centers, otherwise the scrollbar is weirdly placed
+        child: SingleChildScrollView(
+          child: Center(
+            child: RepaintBoundary(
+              key: _qrBoundaryKey,
+              child: Container(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    QrImageView.withQr(
+                      qr: qrCode,
+                      backgroundColor:
+                          ThemeData.light().scaffoldBackgroundColor,
+                      foregroundColor: Colors.black,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(qrData.name, textScaleFactor: 2.5),
+                    Text('(${qrData.iban})', textScaleFactor: 1.25),
+                    if (qrData.amount != 0)
+                      Text(
+                        '€${qrData.amount.toStringAsFixed(2)}',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                    if (qrData.reference.isNotEmpty)
+                      Text(qrData.reference)
+                    else if (qrData.referenceText.isNotEmpty)
+                      Text(qrData.referenceText),
+                    const SizedBox(height: 16),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                Text(qrData.name, textScaleFactor: 2.5),
-                Text('(${qrData.iban})', textScaleFactor: 1.25),
-                if (qrData.amount != 0)
-                  Text(
-                    '€${qrData.amount.toStringAsFixed(2)}',
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                if (qrData.reference.isNotEmpty)
-                  Text(qrData.reference)
-                else if (qrData.referenceText.isNotEmpty)
-                  Text(qrData.referenceText),
-                const SizedBox(height: 16),
-              ],
+              ),
             ),
           ),
         ),

@@ -33,64 +33,71 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
         child: const Icon(Icons.qr_code),
         onPressed: () => _showCode(context),
       ),
-      body: FormBuilder(
-        key: _formKey,
+      body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 8.0),
-              const _NameInputField(),
-              const _IbanInputField(),
-              const _BicInputField(),
-              const _AmountInputField(),
-              const Divider(thickness: 2),
-              Padding(
-                padding: _fieldPadding,
-                child: FormBuilderRadioGroup<bool>(
-                  name: 'use-ref',
-                  options: const [
-                    FormBuilderFieldOption(
-                      value: true,
-                      child: Text('Reference'),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: FormBuilder(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 8.0),
+                    const _NameInputField(),
+                    const _IbanInputField(),
+                    const _BicInputField(),
+                    const _AmountInputField(),
+                    const Divider(thickness: 2),
+                    Padding(
+                      padding: _fieldPadding,
+                      child: FormBuilderRadioGroup<bool>(
+                        name: 'use-ref',
+                        options: const [
+                          FormBuilderFieldOption(
+                            value: true,
+                            child: Text('Reference'),
+                          ),
+                          FormBuilderFieldOption(
+                            value: false,
+                            child: Text('Purpose'),
+                          ),
+                        ],
+                        separator: const Padding(
+                          padding: EdgeInsets.only(left: 16.0, right: 8.0),
+                          child: Text('or'),
+                        ),
+                        initialValue: useRef,
+                        onChanged: (value) {
+                          setState(() {
+                            useRef = value!;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                      ),
                     ),
-                    FormBuilderFieldOption(
-                      value: false,
-                      child: Text('Purpose'),
-                    ),
+                    // if (useRef)
+                    _ReferenceInputField(enabled: useRef),
+                    // else
+                    _PurposeInputField(enabled: !useRef),
+                    const Divider(thickness: 2.0),
+                    const _NoteInputField(),
+                    Padding(
+                      padding: _fieldPadding,
+                      child: Center(
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.qr_code, size: 18),
+                          label: const Text('SHOW CODE'),
+                          onPressed: () => _showCode(context),
+                        ),
+                      ),
+                    )
                   ],
-                  separator: const Padding(
-                    padding: EdgeInsets.only(left: 16.0, right: 8.0),
-                    child: Text('or'),
-                  ),
-                  initialValue: useRef,
-                  onChanged: (value) {
-                    setState(() {
-                      useRef = value!;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
                 ),
               ),
-              // if (useRef)
-              _ReferenceInputField(enabled: useRef),
-              // else
-              _PurposeInputField(enabled: !useRef),
-              const Divider(thickness: 2.0),
-              const _NoteInputField(),
-              Padding(
-                padding: _fieldPadding,
-                child: Center(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.qr_code, size: 18),
-                    label: const Text('SHOW CODE'),
-                    onPressed: () => _showCode(context),
-                  ),
-                ),
-              )
-            ],
+            ),
           ),
         ),
       ),
