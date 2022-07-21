@@ -19,7 +19,7 @@ class ViewCodePage extends StatelessWidget {
     final qrCode = QrCode.fromData(
       data: qrData.qrDataString,
       errorCorrectLevel: QrErrorCorrectLevel.M,
-    )..make();
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +56,7 @@ class ViewCodePage extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          QrImage.withQr(qr: qrCode),
+          QrImageView.withQr(qr: qrCode),
         ],
       ),
     );
