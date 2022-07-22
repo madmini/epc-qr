@@ -38,8 +38,81 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  
+  <script src="https://unpkg.com/canvaskit-wasm@0.33.0/bin/canvaskit.js"></script>
+  <link rel="preload" href="https://unpkg.com/canvaskit-wasm@0.33.0/bin/canvaskit.wasm" as="fetch" crossOrigin="anonymous" />
+  <link rel="preload" href="/assets/fonts/MaterialIcons-Regular.otf" as="fetch" />
+
+  <style>
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background-color: #303030; /* Scaffold background color */
+        --spinner-color: #105684; /* FloatingActionButton color */
+      }
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --background-color: #FDFCFF; /* lightColorScheme.background */
+        --spinner-color: #0062A0; /* lightColorScheme.primary */
+      }
+    }
+
+    body {
+      height: 100%;
+      width: 100%;
+      background-color: var(--background-color);
+    }
+
+    /* Loading spinner from https://itnext.io/c5dd36a29f5b */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+
+    .loader {
+      /* border: 16px solid #f3f3f3; */
+      border-radius: 50%;
+      border: 15px solid ;
+      border-top: 16px solid var(--spinner-color);
+      border-right: 16px solid var(--background-color);
+      border-bottom: 16px solid var(--spinner-color);
+      border-left: 16px solid var(--background-color);
+      width: 120px;
+      height: 120px;
+      -webkit-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+      }
+      100% {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="loading">
+    <div class="loader"></div>
+  </div>
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
