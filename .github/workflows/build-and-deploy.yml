@@ -1,0 +1,84 @@
+# for reference see:
+#   - Workflow syntax: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+#   - Contexts: https://docs.github.com/en/actions/learn-github-actions/contexts
+#   - Expressions: https://docs.github.com/en/actions/learn-github-actions/expressions
+name: CI
+
+on:
+  workflow_dispatch: # run from the Actions tab
+  push:
+    branches: [ "main" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+env:
+  DART_DEFINES: >-
+    --dart-define=GIT_URL=https://github.com/madmini/epc-qr
+    --dart-define=GIT_REF=${{ github.ref_name }}
+    --dart-define=CI_PROVIDER=GitHubActions
+    --dart-define=COMMIT_HASH=${{ github.sha }}
+    --dart-define=VERSION_TAG=${{ github.ref_name }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    container: cirrusci/flutter:stable
+    concurrency: 
+      group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build web
+        run: flutter build web --release --base-href "/epc-qr/" $DART_DEFINES
+        
+      - name: Compress web build
+        run: zip -r ../web.zip .
+        working-directory: build/web
+
+      - name: Store web build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-web
+          path: build/web.zip
+
+      - if: github.ref_type == 'tag'
+        name: Set-up GitHub Pages deployment
+        run: apt-get update && apt-get install -y rsync
+
+      - if: github.ref_type == 'tag'
+        name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/web
+
+      - name: Build Android
+        run: flutter build apk --release $DART_DEFINES
+
+      - name: Store android build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-android
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - if: github.ref_type == 'tag'
+        name: Prepare release
+        run: |
+          mkdir artifacts
+          mv build/web.zip artifacts/epc-qr_${{ github.ref_name }}_web.zip
+          mv build/app/outputs/flutter-apk/app-release.apk artifacts/epc-qr_${{ github.ref_name }}.apk
+
+      - if: github.ref_type == 'tag'
+        name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          artifacts: artifacts/*
