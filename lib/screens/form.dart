@@ -1,5 +1,6 @@
 import 'package:epc_qr/data/qr_data.dart';
 import 'package:epc_qr/screens/view_code.dart';
+import 'package:epc_qr/widgets/about_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -28,6 +29,7 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Enter Payment Data'),
+        actions: const [AboutButton()],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.qr_code),
@@ -69,8 +71,9 @@ class _EpcQrFormPageState extends State<EpcQrFormPage> {
                         ),
                         initialValue: useRef,
                         onChanged: (value) {
+                          if (value == null) return;
                           setState(() {
-                            useRef = value!;
+                            useRef = value;
                           });
                         },
                         decoration: const InputDecoration(
