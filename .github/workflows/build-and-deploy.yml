@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     container: cirrusci/flutter:stable
     concurrency: 
-      group: ${{ github.workflow }}-{{ github.ref || github.run_id }}
+      group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
       cancel-in-progress: true
 
     steps:
@@ -38,11 +38,11 @@ jobs:
           name: build-web
           path: build/web.zip
 
-      - #if: github.ref == 'refs/heads/main'
+      - #if: github.ref_type == 'tag'
         name: Set-up GitHub Pages deployment
         run: apt-get update && apt-get install -y rsync
 
-      - #if: github.ref == 'refs/heads/main'
+      - #if: github.ref_type == 'tag'
         name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
@@ -61,8 +61,8 @@ jobs:
         name: Prepare release
         run: |
           mkdir artifacts
-          cp build/web.zip artifacts/epc-qr_{{ github.ref_name }}_web.zip
-          cp build/app/outputs/flutter-apk/app-release.apk artifacts/epc-qr_{{ github.ref_name }}.apk
+          mv build/web.zip artifacts/epc-qr_${{ github.ref_name }}_web.zip
+          mv build/app/outputs/flutter-apk/app-release.apk artifacts/epc-qr_${{ github.ref_name }}.apk
 
       - if: github.ref_type == 'tag'
         name: Create release
