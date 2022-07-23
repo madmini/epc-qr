@@ -50,27 +50,19 @@ jobs:
       #  run: zip -r ../web.zip .
       #  working-directory: build/web
         
-      - name: Store web build
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-web
-          path: build/web
+      #- name: Store web build
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: build-web
+      #    path: build/web
+      
+      
+      - #if: github.ref == 'refs/heads/master'
+        name: Install rsync # for github deploy
+        run: apt-get update && apt-get install -y rsync
 
-  deploy:
-    #if: github.ref == 'refs/heads/master'
-    needs: build
-    runs-on: ubuntu-latest
-    
-    steps:
-      #- name: Install rsync # for github deploy
-      #  run: apt-get update && apt-get install -y rsync
-
-      - name: Retrieve web build
-        uses: actions/download-artifact@v3
-        with:
-          name: build-web
-
-      - name: Deploy to GitHub Pages
+      - #if: github.ref == 'refs/heads/master'
+        name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: .
+          folder: build/web
