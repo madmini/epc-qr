@@ -1,8 +1,7 @@
 bool get shareFeatureAvailable {
-  throw (UnimplementedError("STUB"));
   return false;
 }
 
 Future<void> shareFile(String name, List<int> data, {String? mimeType}) {
-  throw UnimplementedError();
+  throw UnimplementedError('Sharing files is not supported on this platform.');
 }
