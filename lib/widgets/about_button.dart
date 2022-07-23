@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 
 const kGitUrl = String.fromEnvironment('GIT_URL');
-const kGitBranch = String.fromEnvironment('GIT_BRANCH');
+const kGitRef = String.fromEnvironment('GIT_REF');
 const kCommitHash = String.fromEnvironment('COMMIT_HASH');
 const kCiProvider = String.fromEnvironment('CI_PROVIDER');
 const kVersionTag = String.fromEnvironment('VERSION_TAG');
@@ -57,18 +57,18 @@ class AboutSourceText extends StatelessWidget {
           linkStyle: _linkStyle(context),
           onOpen: onOpenLaunchUrl,
         ),
-        if (kGitBranch != '')
-          TextSpan(children: [
-            const TextSpan(text: ' (in '),
-            TextSpan(text: kGitBranch, style: _codeStyle(context)),
-            const TextSpan(text: ')'),
-          ]),
         if (kCommitHash != '')
           TextSpan(children: [
             const TextSpan(text: ' at '),
             TextSpan(text: kCommitHash, style: _codeStyle(context)),
-            const TextSpan(text: '.'),
           ]),
+        if (kGitRef != '')
+          TextSpan(children: [
+            const TextSpan(text: ' ('),
+            TextSpan(text: kGitRef, style: _codeStyle(context)),
+            const TextSpan(text: ')'),
+          ]),
+        const TextSpan(text: '.'),
       ]),
     );
   }

@@ -18,7 +18,7 @@ permissions:
 env:
   DART_DEFINES: >-
     --dart-define=GIT_URL=https://github.com/madmini/epc-qr
-    --dart-define=GIT_BRANCH=${{ github.ref_name }}
+    --dart-define=GIT_REF=${{ github.ref_name }}
     --dart-define=CI_PROVIDER=GitHubActions
     --dart-define=COMMIT_HASH=${{ github.sha }}
     --dart-define=VERSION_TAG=${{ github.ref_name }}
