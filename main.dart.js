@@ -38123,7 +38123,7 @@ $S:0}
 A.DC.prototype={
 G(a,b){return A.Yr(null,B.BY,null,new A.T4(b),null)}}
 A.T4.prototype={
-$0(){return A.aKX("EPC-QR Generator","vTest",B.E4,this.a)},
+$0(){return A.aKX("EPC-QR Generator","v0.2.0",B.E4,this.a)},
 $S:0}
 A.DD.prototype={
 F3(a){var s=null,r=A.Q(a).R8.e
@@ -38133,8 +38133,9 @@ G(a,b){var s,r=null,q=A.ke(r,r,A.Q(b).as.a===B.aa?B.dX:B.dT,r,r,r,r,r,"RobotoMon
 q=A.aGz(A.aHw("https://github.com/madmini/epc-qr",B.Ey,B.xv),B.bH,q,A.aHx(),r)
 s=t.VO
 q=A.a([B.Nd,new A.GC(r,q,r,B.ax,r,r,r,r,r,r)],s)
-q.push(A.dY(A.a([B.Nh,A.dY(r,r,r,r,r,r,r,r,this.F3(b),"vTest"),B.Nf],s),r,r,r,r,r,r,r,r,r))
-q.push(A.dY(A.a([B.Ne,A.dY(r,r,r,r,r,r,r,r,this.F3(b),"24570294c946359ed857b698ca7ce1d190ec4a00"),B.Ng],s),r,r,r,r,r,r,r,r,r))
+q.push(A.dY(A.a([B.Ne,A.dY(r,r,r,r,r,r,r,r,this.F3(b),"a490eb80cb081baceddb64f79db9a904d4ec2dce")],s),r,r,r,r,r,r,r,r,r))
+q.push(A.dY(A.a([B.Nf,A.dY(r,r,r,r,r,r,r,r,this.F3(b),"v0.2.0"),B.Ng],s),r,r,r,r,r,r,r,r,r))
+q.push(B.Nh)
 q=A.dY(q,r,r,r,r,r,r,r,r,r)
 return new A.yK(q,B.RF,r)}}
 A.fA.prototype={
@@ -74584,9 +74585,9 @@ B.Nc=new A.dW(0,0,B.m,!1,0,0)
 B.Nb=new A.dW(0,1,B.m,!1,0,1)
 B.Nd=new A.dX("Built by GitHubActions from ",null,null,B.ax,null,null,null,null,null,null)
 B.Ne=new A.dX(" at ",null,null,B.ax,null,null,null,null,null,null)
-B.Nf=new A.dX(")",null,null,B.ax,null,null,null,null,null,null)
-B.Ng=new A.dX(".",null,null,B.ax,null,null,null,null,null,null)
-B.Nh=new A.dX(" (in ",null,null,B.ax,null,null,null,null,null,null)
+B.Nf=new A.dX(" (",null,null,B.ax,null,null,null,null,null,null)
+B.Ng=new A.dX(")",null,null,B.ax,null,null,null,null,null,null)
+B.Nh=new A.dX(".",null,null,B.ax,null,null,null,null,null,null)
 B.le=new A.zf(1)
 B.NA=new A.m(!0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,B.le,null,null,null,null,null,null,null)
 B.zN=new A.F(3506372608)
