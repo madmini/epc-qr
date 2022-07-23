@@ -76,7 +76,7 @@ jobs:
           mv build/web.zip artifacts/epc-qr_${{ github.ref_name }}_web.zip
           mv build/app/outputs/flutter-apk/app-release.apk artifacts/epc-qr_${{ github.ref_name }}.apk
 
-      - #if: github.ref_type == 'tag'
+      - if: github.ref_type == 'tag'
         name: Create release
         uses: ncipollo/release-action@v1
         with:
