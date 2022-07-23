@@ -17,21 +17,25 @@ permissions:
 
 env:
   DART_DEFINES: >-
-    --dart-define=GIT_URL=\"https://github.com/madmini/epc-qr\"
-    --dart-define=GIT_BRANCH=\"${{ github.ref_name }}\"
-    --dart-define=CI_PROVIDER=\"GitHub Actions\"
-    --dart-define=COMMIT_HASH=\"${{ github.sha }}\"
-    --dart-define=VERSION_TAG=\"${{ github.ref_name }}\"
+    "--dart-define=GIT_URL=https://github.com/madmini/epc-qr"
+    "--dart-define=GIT_BRANCH=${{ github.ref_name }}"
+    "--dart-define=CI_PROVIDER=GitHub Actions"
+    "--dart-define=COMMIT_HASH=${{ github.sha }}"
+    "--dart-define=VERSION_TAG=${{ github.ref_name }}"
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    container: cirrusci/flutter:stable
+    #container: cirrusci/flutter:stable
     concurrency: 
       group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
       cancel-in-progress: true
 
     steps:
+      - run: |
+          echo $DART_DEFINES
+          exit(1)
+    
       - uses: actions/checkout@v3
 
       - name: Install dependencies
