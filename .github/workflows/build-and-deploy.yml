@@ -4,6 +4,7 @@ on:
   workflow_dispatch: # run from the Actions tab
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
 
@@ -26,12 +27,16 @@ jobs:
 
       - name: Build web
         run: flutter build web --release --base-href "/epc-qr/"
+        
+      - name: Compress web build
+        run: zip -r ../web.zip .
+        working-directory: build/web
 
       - name: Store web build
         uses: actions/upload-artifact@v3
         with:
           name: build-web
-          path: build/web
+          path: build/web.zip
 
       - #if: github.ref == 'refs/heads/main'
         name: Set-up GitHub Pages deployment
@@ -51,3 +56,17 @@ jobs:
         with:
           name: build-android
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - if: github.ref_type == 'tag'
+        name: Prepare release
+        run: |
+          mkdir artifacts
+          cp build/web.zip artifacts/epc-qr_{{ github.ref_name }}_web.zip
+          cp build/app/outputs/flutter-apk/app-release.apk artifacts/epc-qr_{{ github.ref_name }}.apk
+
+      - if: github.ref_type == 'tag'
+        name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          artifacts: artifacts/*
