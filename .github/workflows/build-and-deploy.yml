@@ -7,7 +7,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-
 permissions:
   contents: write
 
@@ -22,46 +21,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - run: |
-          export PUB_CACHE=$(pwd)/.pub_cache
-          export PATH="$PATH":"$PUB_CACHE/bin"
-      - name: Cache flutter stuff
-        id: cache-flutter
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-flutter
-        with:
-          path: |
-            .dart_tool
-            .pub_cache
-          key: build-${{ env.cache-name }}-${{ hashFiles('pubspec.lock') }}
-          restore-keys: |
-            build-${{ env.cache-name }}-${{ hashFiles('pubspec.lock') }}
-            build-${{ env.cache-name }}-
-            build-
-      
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build web
         run: flutter build web --release --base-href "/epc-qr/"
-        
-      #- name: Compress web build
-      #  run: zip -r ../web.zip .
-      #  working-directory: build/web
-        
-      #- name: Store web build
-      #  uses: actions/upload-artifact@v3
-      #  with:
-      #    name: build-web
-      #    path: build/web
       
-      
-      - #if: github.ref == 'refs/heads/master'
+      - #if: github.ref == 'refs/heads/main'
         name: Install rsync # for github deploy
         run: apt-get update && apt-get install -y rsync
 
-      - #if: github.ref == 'refs/heads/master'
+      - #if: github.ref == 'refs/heads/main'
         name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
