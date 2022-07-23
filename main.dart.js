@@ -35567,7 +35567,7 @@ b=p}}B.b.m(j.b,b,a)}}
 A.SD.prototype={
 gap(a){return this.a}}
 A.Ep.prototype={
-I(a,b){return new A.v5(B.A2,"Flutter Demo",$.amy(),$.am2(),B.v_,null)}}
+I(a,b){return new A.v5(B.A2,"EPC-QR Generator",$.amy(),$.am2(),B.v_,null)}}
 A.u6.prototype={
 ah(){return new A.Jw(B.m)}}
 A.Jw.prototype={
