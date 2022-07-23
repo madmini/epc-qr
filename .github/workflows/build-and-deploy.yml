@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  workflow_dispatch: # run from the Actions tab
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: cirrusci/flutter:stable
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Cache flutter packages
+        id: cache-pub
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-flutter-pub
+        with:
+          path: .dart_tool
+          key: build-${{ env.cache-name }}-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            build-${{ env.cache-name }}-${{ hashFiles('pubspec.lock') }}
+            build-${{ env.cache-name }}-
+            build-
+      
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build web
+        run: flutter build web --release --base-href "/epc-qr/"
+        
+      #- name: Compress web build
+      #  run: zip -r ../web.zip .
+      #  working-directory: build/web
+        
+      - name: Store web build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-web
+          path: build/web
+
+  deploy:
+    if: github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      #- name: Install rsync # for github deploy
+      #  run: apt-get update && apt-get install -y rsync
+
+      - name: Retrieve web build
+        uses: actions/download-artifact@v3
+        with:
+          name: build-web
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/web
