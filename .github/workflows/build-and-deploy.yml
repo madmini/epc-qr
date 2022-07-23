@@ -1,3 +1,7 @@
+# for reference see:
+#   - Workflow syntax: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+#   - Contexts: https://docs.github.com/en/actions/learn-github-actions/contexts
+#   - Expressions: https://docs.github.com/en/actions/learn-github-actions/expressions
 name: CI
 
 on:
@@ -5,8 +9,8 @@ on:
   push:
     branches: [ "main" ]
     tags: [ "v*" ]
-#   pull_request:
-#     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: write
@@ -14,66 +18,55 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-#     container: cirrusci/flutter:stable
+    container: cirrusci/flutter:stable
     concurrency: 
       group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
       cancel-in-progress: true
 
     steps:
-#       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-#       - name: Install dependencies
-#         run: flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
 
-#       - name: Build web
-#         run: flutter build web --release --base-href "/epc-qr/"
+      - name: Build web
+        run: flutter build web --release --base-href "/epc-qr/"
         
-#       - name: Compress web build
-#         run: zip -r ../web.zip .
-#         working-directory: build/web
+      - name: Compress web build
+        run: zip -r ../web.zip .
+        working-directory: build/web
 
-#       - name: Store web build
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: build-web
-#           path: build/web.zip
+      - name: Store web build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-web
+          path: build/web.zip
 
-#       - if: github.ref_type == 'tag'
-#         name: Set-up GitHub Pages deployment
-#         run: apt-get update && apt-get install -y rsync
+      - if: github.ref_type == 'tag'
+        name: Set-up GitHub Pages deployment
+        run: apt-get update && apt-get install -y rsync
 
-#       - if: github.ref_type == 'tag'
-#         name: Deploy to GitHub Pages
-#         uses: JamesIves/github-pages-deploy-action@v4
-#         with:
-#           folder: build/web
+      - if: github.ref_type == 'tag'
+        name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/web
 
-#       - name: Build Android
-#         run: flutter build apk --release
+      - name: Build Android
+        run: flutter build apk --release
 
-#       - name: Store android build
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: build-android
-#           path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Store android build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-android
+          path: build/app/outputs/flutter-apk/app-release.apk
 
-#       - if: github.ref_type == 'tag'
-#         name: Prepare release
-#         run: |
-#           mkdir artifacts
-#           mv build/web.zip artifacts/epc-qr_${{ github.ref_name }}_web.zip
-#           mv build/app/outputs/flutter-apk/app-release.apk artifacts/epc-qr_${{ github.ref_name }}.apk
-
-      - name: DEBUG - prepare release
+      - if: github.ref_type == 'tag'
+        name: Prepare release
         run: |
-          echo github.ref_name = ${{ github.ref_name }}
-          echo github.ref_type = ${{ github.ref_type }}
-          echo github.event_name = ${{ github.event_name }}
-          echo github.event = ${{ github.event }}
-          echo github = ${{ github }}
-
           mkdir artifacts
-          echo ${{ github }} > artifacts/test.txt
+          mv build/web.zip artifacts/epc-qr_${{ github.ref_name }}_web.zip
+          mv build/app/outputs/flutter-apk/app-release.apk artifacts/epc-qr_${{ github.ref_name }}.apk
 
       - #if: github.ref_type == 'tag'
         name: Create release
